@@ -100,7 +100,7 @@ def create_image_with_text(text, font_path, font_size, image_width, image_height
 
 if __name__ == "__main__":
     font_path = 'fonts/noto/NotoSans-Bold.ttf'
-    font_size = int(input('Enter pls text size: '))
+    font_size = 56
     image_width = 1960
     image_height = 1180
     max_width = 1560
@@ -110,10 +110,12 @@ if __name__ == "__main__":
     # text = input('Enter your text pls: ')
     # create_image_with_text(text, font_path, font_size, image_width, image_height, max_width, min_width, line_spacing_percent)
 
+    file_path = 'text.txt'
+    with open(file_path, 'r', encoding='utf-8') as file:
+        # Прочитайте вміст файла
+        data_text = file.read()
 
-
-    data_text = input('Введіть текст, будь ласка: ')
-    sentences = re.split(r'(?<=[.])\s*', data_text)
-    for text in sentences:
-        count += 1
-        create_image_with_text(text, font_path, font_size, image_width, image_height, max_width, min_width, line_spacing_percent)
+        sentences = re.split(r'(?<=[.])\s*', data_text)
+        for text in sentences:
+            count += 1
+            create_image_with_text(text, font_path, font_size, image_width, image_height, max_width, min_width, line_spacing_percent)
