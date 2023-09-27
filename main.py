@@ -1,5 +1,8 @@
 from PIL import Image, ImageDraw, ImageFont
 import re
+import os
+import shutil
+
 
 def get_text_line_width(text, font, max_width):
     width, _ = font.getsize(text)
@@ -60,7 +63,7 @@ def create_image_with_text(text, font_path, font_size, image_width, image_height
     for item in data:
         line_width = get_text_line_width(item, font, max_width)
 
-        if line_width <= 1200:
+        if line_width <= 1000:
             result.append(item)
         elif line_width <= 1540:
             line = justify_text(item, font, max_width)
@@ -99,6 +102,12 @@ def create_image_with_text(text, font_path, font_size, image_width, image_height
 
 
 if __name__ == "__main__":
+
+
+    folder_path = 'img'
+    shutil.rmtree(folder_path, ignore_errors=True)
+    os.makedirs(folder_path)
+
     font_path = 'fonts/noto/NotoSans-Bold.ttf'
     font_size = 56
     image_width = 1960
@@ -111,11 +120,24 @@ if __name__ == "__main__":
     # create_image_with_text(text, font_path, font_size, image_width, image_height, max_width, min_width, line_spacing_percent)
 
     file_path = 'text.txt'
+
     with open(file_path, 'r', encoding='utf-8') as file:
         # Прочитайте вміст файла
         data_text = file.read()
 
-        sentences = re.split(r'(?<=[.])\s*', data_text)
-        for text in sentences:
+        sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s', data_text)
+
+        data = []
+
+        current_sentence = ''
+
+        for item in sentences:
+            if len(item + current_sentence) <= 100 + len(item):
+                current_sentence += f'{item} '
+            else:
+                data.append(current_sentence)
+                current_sentence = ''
+
+        for text in data:
             count += 1
             create_image_with_text(text, font_path, font_size, image_width, image_height, max_width, min_width, line_spacing_percent)
