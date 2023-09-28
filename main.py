@@ -63,15 +63,13 @@ def create_image_with_text(text, font_path, font_size, image_width, image_height
     for item in data:
         line_width = get_text_line_width(item, font, max_width)
 
-        if line_width <= 1000:
+        if line_width <= 1100:
             result.append(item)
         elif line_width <= 1540:
             line = justify_text(item, font, max_width)
             result.append(line)
         elif line_width == 1560:
             result.append(item)
-
-    text = '\n'.join(result)
 
     image = Image.new("RGB", (image_width, image_height), (0, 0, 0))
     draw = ImageDraw.Draw(image)
@@ -121,10 +119,15 @@ if __name__ == "__main__":
 
     file_path = 'text.txt'
 
-    with open(file_path, 'r', encoding='utf-8') as file:
-        # Прочитайте вміст файла
-        data_text = file.read()
 
+    def swap_quotes(match):
+        return match.group(1)[:-1] + match.group(2) + match.group(1)[-1]
+
+
+    with open(file_path, 'r', encoding='utf-8') as file:
+
+        data_text = file.read()
+        data_text = data_text.replace('."', '".')
         sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s', data_text)
 
         data = []
@@ -132,6 +135,11 @@ if __name__ == "__main__":
         current_sentence = ''
 
         for item in sentences:
+
+            pattern = r'("[^"]*")(\.)'
+
+            item = re.sub(pattern, swap_quotes, item)
+
             if len(item + current_sentence) <= 100 + len(item):
                 current_sentence += f'{item} '
             else:
@@ -139,5 +147,14 @@ if __name__ == "__main__":
                 current_sentence = ''
 
         for text in data:
-            count += 1
-            create_image_with_text(text, font_path, font_size, image_width, image_height, max_width, min_width, line_spacing_percent)
+            print(len(text))
+            if len(text) >= 180:
+                text = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s', text)
+                for item in text:
+                    count += 1
+                    if len(item) >= 1:
+                        create_image_with_text(item, font_path, font_size, image_width, image_height, max_width, min_width,
+                                               line_spacing_percent)
+            else:
+                count += 1
+                create_image_with_text(text, font_path, font_size, image_width, image_height, max_width, min_width, line_spacing_percent)
