@@ -135,19 +135,26 @@ if __name__ == "__main__":
         current_sentence = ''
 
         for item in sentences:
-
             pattern = r'("[^"]*")(\.)'
 
             item = re.sub(pattern, swap_quotes, item)
 
+
             if len(item + current_sentence) <= 100 + len(item):
                 current_sentence += f'{item} '
+
             else:
+                current_sentence += f'{item} '
+                for txt in data:
+                    if txt in current_sentence:
+                        current_sentence = ''
+                        current_sentence += f'{item} '
                 data.append(current_sentence)
                 current_sentence = ''
 
-        for text in data:
-            print(len(text))
+        cleaned_data = [text.replace('\n', '') for text in data]
+
+        for text in cleaned_data:
             if len(text) >= 180:
                 text = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s', text)
                 for item in text:
