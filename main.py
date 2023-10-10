@@ -107,7 +107,7 @@ if __name__ == "__main__":
     os.makedirs(folder_path)
 
     font_path = 'fonts/noto/NotoSans-Bold.ttf'
-    font_size = 56
+    font_size = 50
     image_width = 1960
     image_height = 1180
     max_width = 1560
@@ -135,6 +135,7 @@ if __name__ == "__main__":
         current_sentence = ''
 
         for item in sentences:
+            print(item)
             pattern = r'("[^"]*")(\.)'
 
             item = re.sub(pattern, swap_quotes, item)
